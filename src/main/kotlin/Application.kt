@@ -3,25 +3,28 @@ package org.billie
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.application.*
+import org.billie.config.AppConfig
+import org.billie.config.loadConfig
 import org.billie.plugins.configureLogging
 import org.billie.plugins.configureRouting
 import org.billie.plugins.configureSerialization
 import org.billie.plugins.configureStatusPages
 
 fun main() {
-    val port = System.getenv("PORT")?.toIntOrNull() ?: 8080
-
+    val config = loadConfig()
     embeddedServer(
         factory = Netty,
-        port = port,
+        port = config.port,
         host = "0.0.0.0",
-        module = Application::module
+        module = {
+            module(config)
+        }
     ).start(wait = true)
 }
 
-fun Application.module() {
+fun Application.module(config: AppConfig = loadConfig()) {
     configureLogging()
     configureSerialization()
-    configureStatusPages()
+    configureStatusPages(config = config)
     configureRouting()
 }

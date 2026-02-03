@@ -8,6 +8,10 @@ import io.ktor.server.routing.get
 
 fun Route.healthRoutes() {
     get("/health") {
-        call.respond(HttpStatusCode.OK, mapOf("status" to "ok"))
+        call.respond(HttpStatusCode.OK, mapOf("status" to "ok", "env" to System.getenv("APP_ENV")))
+    }
+
+    get("/boom") {
+        error("boom")
     }
 }
